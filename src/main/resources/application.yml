@@ -1,0 +1,24 @@
+server.port: 8081
+
+spring:
+#
+# H2 configuration
+#
+  h2:
+    console:
+      settings:
+        web-allow-others: true
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+    url: jdbc:h2:mem:hydra;DB_CLOSE_DELAY=-1
+    databaseName:
+    serverName:
+    username:
+    password:
+
+logging:
+  level:
+    de.coding.kata.nim: DEBUG
