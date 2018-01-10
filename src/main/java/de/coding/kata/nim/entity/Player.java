@@ -24,7 +24,6 @@ public class Player {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Player)) return false;
-        if (!super.equals(o)) return false;
 
         Player player = (Player) o;
 

@@ -67,8 +67,13 @@ public class Game {
     }
 
     @JsonIgnore
+    public Player getOpponent(@NotNull final Player player) {
+        return player1.equals(player) ? player2 : player1;
+    }
+
+    @JsonIgnore
     public void endGame(@NotNull final Player lastPlayer) {
-        this.winner = player1.equals(lastPlayer) ? player2 : player1;
+        this.winner = getOpponent(lastPlayer);
         this.currentPlayer = null;
     }
 

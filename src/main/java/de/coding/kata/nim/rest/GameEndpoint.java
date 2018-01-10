@@ -40,12 +40,12 @@ public class GameEndpoint {
     public Game takeMatches(@PathVariable("playerName") final String playerName,
                             @PathVariable("gameId") final String gameId,
                             @PathVariable("numberOfMatches") final int numberOfMatches) {
-        log.debug("{} about to take {} matches for game {}", playerName, numberOfMatches, gameId);
+        log.debug("{} is about to take {} matches for game {}", playerName, numberOfMatches, gameId);
 
         final Player player = playerService.getOrCreatePlayerForName(playerName);
         final Game game = gameService.getGameById(gameId);
 
-        return gameService.takeMatches(game, player, numberOfMatches);
+        return gameService.playRound(game, player, numberOfMatches);
     }
 
 }

@@ -39,8 +39,7 @@ public class GameService {
     }
 
     public Game getGameById(final String gameId) {
-        return gameRepository.findById(UUID.fromString(gameId))
-                .orElseThrow(GameNotFoundException::new);
+        return gameRepository.findById(UUID.fromString(gameId)).orElseThrow(GameNotFoundException::new);
     }
 
     public Game startGame(final Player player) {
@@ -50,16 +49,20 @@ public class GameService {
         return game;
     }
 
-    public Game takeMatches(final Game game, final Player player, final int numberOfMatches) {
-        if(game.isMyTurn(player)) {
-            game.takeMatches(player, numberOfMatches);
-            log.debug("{} took {} matches in game {}. {} remaining", player, numberOfMatches, game.getGameId(), game.getRemainingMatches());
+    private void takeMatches(final Game game, final Player player, final int numberOfMatches) {
+        game.takeMatches(player, numberOfMatches);
+        log.debug("{} took {} matches in game {}. {} remaining",
+                player, numberOfMatches, game.getGameId(), game.getRemainingMatches());
+    }
 
+    public Game playRound(final Game game, final Player player, final int numberOfMatches) {
+        if(!game.isMyTurn(player)) throw new NotYourTurnException();
+
+        takeMatches(game, player, numberOfMatches);
+
+        if(game.isMyTurn(computerPlayer)) {
             final int matchesForComputerPlayer = strategy.execute(game.getRemainingMatches());
-            game.takeMatches(computerPlayer, matchesForComputerPlayer);
-            log.debug("{} took {} matches in game {}. {} remaining", computerPlayer, matchesForComputerPlayer, game.getGameId(), game.getRemainingMatches());
-        } else {
-            throw new NotYourTurnException();
+            takeMatches(game, computerPlayer, matchesForComputerPlayer);
         }
 
         return gameRepository.save(game);

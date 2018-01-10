@@ -21,6 +21,8 @@ public class StateRunning implements GameState {
         if((remainingMatches -= matchesToTake) == 0) {
             context.setGameState(new StateEnded());
             context.endGame(player);
+        } else {
+            context.setCurrentPlayer(context.getOpponent(player));
         }
 
         context.setRemainingMatches(remainingMatches);
