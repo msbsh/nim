@@ -11,8 +11,4 @@ public interface GameState {
 
     boolean isRunning(final Game context);
 
-    Player getWinner(final Game context);
-
-    Player getSecondWinner(final Game context);
-
 }

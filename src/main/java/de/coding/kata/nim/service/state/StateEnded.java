@@ -20,14 +20,4 @@ public class StateEnded implements GameState {
         return false;
     }
 
-    @Override
-    public Player getWinner(final Game context) {
-        return context.getCurrentPlayer().equals(context.getPlayer1())
-                ? context.getPlayer2() : context.getPlayer1();
-    }
-
-    @Override
-    public Player getSecondWinner(final Game context) {
-        return context.getCurrentPlayer();
-    }
 }

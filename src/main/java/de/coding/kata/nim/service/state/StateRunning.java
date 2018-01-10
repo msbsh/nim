@@ -20,6 +20,7 @@ public class StateRunning implements GameState {
 
         if((remainingMatches -= matchesToTake) == 0) {
             context.setGameState(new StateEnded());
+            context.endGame(player);
         }
 
         context.setRemainingMatches(remainingMatches);
@@ -33,16 +34,6 @@ public class StateRunning implements GameState {
     @Override
     public boolean isRunning(final Game context) {
         return true;
-    }
-
-    @Override
-    public Player getWinner(final Game context) {
-        throw new IllegalStateException("To soon to tell..");
-    }
-
-    @Override
-    public Player getSecondWinner(final Game context) {
-        throw new IllegalStateException("To soon to tell..");
     }
 
 }

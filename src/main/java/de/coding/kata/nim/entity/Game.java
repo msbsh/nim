@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Data
@@ -28,10 +29,13 @@ public class Game {
     @ManyToOne
     private Player player2;
 
-    @OneToOne
+    @ManyToOne
     private Player currentPlayer;
 
     private int remainingMatches;
+
+    @ManyToOne
+    private Player winner;
 
     public Game() {
     }
@@ -41,6 +45,7 @@ public class Game {
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = player1;
+        this.winner = null;
         this.remainingMatches = 13;
 
         this.gameState = new StateRunning();
@@ -62,13 +67,9 @@ public class Game {
     }
 
     @JsonIgnore
-    public Player getWinner() {
-        return gameState.getWinner(this);
-    }
-
-    @JsonIgnore
-    public Player getSecondWinner(final Game context) {
-        return gameState.getSecondWinner(this);
+    public void endGame(@NotNull final Player lastPlayer) {
+        this.winner = player1.equals(lastPlayer) ? player2 : player1;
+        this.currentPlayer = null;
     }
 
 }
