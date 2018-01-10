@@ -2,6 +2,8 @@ package de.coding.kata.nim.service;
 
 import de.coding.kata.nim.entity.Game;
 import de.coding.kata.nim.entity.Player;
+import de.coding.kata.nim.exception.GameNotFoundException;
+import de.coding.kata.nim.exception.NotYourTurnException;
 import de.coding.kata.nim.repository.GameRepository;
 import de.coding.kata.nim.service.strategy.GameStrategy;
 import de.coding.kata.nim.service.strategy.RandomStrategy;
@@ -38,14 +40,12 @@ public class GameService {
 
     public Game getGameById(final String gameId) {
         return gameRepository.findById(UUID.fromString(gameId))
-                .orElseThrow(() -> new IllegalArgumentException("This is not the game, you are looking for"));
+                .orElseThrow(GameNotFoundException::new);
     }
 
     public Game startGame(final Player player) {
-        Game g = new Game(player, computerPlayer);
-        log.debug("Created game! {}", g);
+        final Game game = gameRepository.save(new Game(player, computerPlayer));
 
-        final Game game = gameRepository.save(g);
         log.debug("Started game {}", game);
         return game;
     }
@@ -59,7 +59,7 @@ public class GameService {
             game.takeMatches(computerPlayer, matchesForComputerPlayer);
             log.debug("{} took {} matches in game {}. {} remaining", computerPlayer, matchesForComputerPlayer, game.getGameId(), game.getRemainingMatches());
         } else {
-            throw new IllegalStateException("This just isn't you time!");
+            throw new NotYourTurnException();
         }
 
         return gameRepository.save(game);
