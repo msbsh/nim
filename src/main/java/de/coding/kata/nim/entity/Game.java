@@ -1,24 +1,30 @@
 package de.coding.kata.nim.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.coding.kata.nim.service.converter.GameStateConverter;
-import de.coding.kata.nim.service.state.GameState;
-import de.coding.kata.nim.service.state.StateRunning;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.UUID;
 
 @Data
+@Slf4j
 @Entity
 @ToString
+@NoArgsConstructor
 public class Game {
 
-    @JsonIgnore
-    @Convert(converter = GameStateConverter.class)
-    private GameState gameState;
+    public Game(final Player player1, final Player player2, final int initialMatchCount) {
+        this.gameId = UUID.randomUUID();
+        this.player1 = player1;
+        this.player2 = player2;
+        this.currentPlayer = player1;
+        this.remainingMatches = initialMatchCount;
+        this.winner = null;
+    }
 
     @Id
     private UUID gameId;
@@ -37,44 +43,41 @@ public class Game {
     @ManyToOne
     private Player winner;
 
-    public Game() {
+    private boolean canSubtract(final int remainingMatches, final int matchesToTake) {
+        return (remainingMatches - matchesToTake) >= 0;
     }
 
-    public Game(final Player player1, final Player player2) {
-        this.gameId = UUID.randomUUID();
-        this.player1 = player1;
-        this.player2 = player2;
-        this.currentPlayer = player1;
-        this.winner = null;
-        this.remainingMatches = 13;
-
-        this.gameState = new StateRunning();
-    }
-
-    @JsonIgnore
-    public void takeMatches(Player player, int number) {
-        gameState.takeMatches(this, player, number);
-    }
-
-    @JsonIgnore
-    public boolean isMyTurn(Player player) {
-        return gameState.isMyTurn(this, player);
-    }
-
-    @JsonIgnore
-    public boolean isRunning() {
-        return gameState.isRunning(this);
-    }
-
-    @JsonIgnore
-    public Player getOpponent(@NotNull final Player player) {
+    private Player getOpponent(final Player player) {
         return player1.equals(player) ? player2 : player1;
     }
 
-    @JsonIgnore
-    public void endGame(@NotNull final Player lastPlayer) {
-        this.winner = getOpponent(lastPlayer);
+    private void endGame() {
+        this.winner = getOpponent(currentPlayer);
         this.currentPlayer = null;
+    }
+
+    private void nextPlayer() {
+        currentPlayer = getOpponent(currentPlayer);
+    }
+
+    public void takeMatches(final int numberOfMatches) {
+        if(!canSubtract(remainingMatches, numberOfMatches)) {
+            throw new IllegalArgumentException(
+                    String.format("Cannot take %d of %d matches!", numberOfMatches, remainingMatches));
+        }
+        log.debug("{} took {} matches in game {}. {} remaining",
+                currentPlayer, numberOfMatches, gameId, (remainingMatches - numberOfMatches));
+
+        remainingMatches -= numberOfMatches;
+        if (remainingMatches == 0) {
+            endGame();
+        } else {
+            nextPlayer();
+        }
+    }
+
+    public boolean isMyTurn(final Player player) {
+        return currentPlayer != null && currentPlayer.equals(player);
     }
 
 }

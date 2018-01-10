@@ -1,9 +1,6 @@
 server.port: 8081
 
 spring:
-#
-# H2 configuration
-#
   h2:
     console:
       settings:
@@ -12,13 +9,13 @@ spring:
       path: /h2-console
 
   datasource:
-    dataSourceClassName: org.h2.jdbcx.JdbcDataSource
     url: jdbc:h2:mem:hydra;DB_CLOSE_DELAY=-1
-    databaseName:
-    serverName:
-    username:
-    password:
 
 logging:
   level:
     de.coding.kata.nim: DEBUG
+
+# Game specific settings
+game:
+  initialMatchCount: 13
+  computer.name: Computer

@@ -9,6 +9,7 @@ import de.coding.kata.nim.service.strategy.GameStrategy;
 import de.coding.kata.nim.service.strategy.RandomStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +19,11 @@ import java.util.UUID;
 @Service
 public class GameService {
 
-    private static final String COMPUTER_PLAYER_NAME = "COM";
+    @Value("${game.initialMatchCount:13}")
+    private int INITIAL_MATCH_COUNT;
+
+    @Value("${game.computer.name:Computer}")
+    private String COMPUTER_PLAYER_NAME;
 
     private GameRepository gameRepository;
     private PlayerService playerService;
@@ -43,26 +48,20 @@ public class GameService {
     }
 
     public Game startGame(final Player player) {
-        final Game game = gameRepository.save(new Game(player, computerPlayer));
+        final Game game = gameRepository.save(new Game(player, computerPlayer, INITIAL_MATCH_COUNT));
 
         log.debug("Started game {}", game);
         return game;
     }
 
-    private void takeMatches(final Game game, final Player player, final int numberOfMatches) {
-        game.takeMatches(player, numberOfMatches);
-        log.debug("{} took {} matches in game {}. {} remaining",
-                player, numberOfMatches, game.getGameId(), game.getRemainingMatches());
-    }
-
     public Game playRound(final Game game, final Player player, final int numberOfMatches) {
         if(!game.isMyTurn(player)) throw new NotYourTurnException();
 
-        takeMatches(game, player, numberOfMatches);
+        game.takeMatches(numberOfMatches);
 
         if(game.isMyTurn(computerPlayer)) {
             final int matchesForComputerPlayer = strategy.execute(game.getRemainingMatches());
-            takeMatches(game, computerPlayer, matchesForComputerPlayer);
+            game.takeMatches(matchesForComputerPlayer);
         }
 
         return gameRepository.save(game);
