@@ -7,6 +7,7 @@ import de.coding.kata.nim.exception.NotYourTurnException;
 import de.coding.kata.nim.repository.GameRepository;
 import de.coding.kata.nim.service.strategy.GameStrategy;
 import de.coding.kata.nim.service.strategy.RandomStrategy;
+import de.coding.kata.nim.service.strategy.StableGeniusStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +40,7 @@ public class GameService {
 
     @PostConstruct
     private void initializeComputerPlayer() {
-        strategy = new RandomStrategy();
+        strategy = new StableGeniusStrategy();
         computerPlayer = playerService.getOrCreatePlayerForName(COMPUTER_PLAYER_NAME);
     }
 
