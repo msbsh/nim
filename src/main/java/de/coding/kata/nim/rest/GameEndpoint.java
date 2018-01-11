@@ -26,6 +26,7 @@ public class GameEndpoint {
         this.gameService = gameService;
     }
 
+    @SuppressWarnings("unused")
     @PostMapping("/start")
     @ResponseStatus(HttpStatus.CREATED)
     public Game createGame(@PathVariable("playerName") final String playerName) {
@@ -35,6 +36,7 @@ public class GameEndpoint {
         return gameService.startGame(player);
     }
 
+    @SuppressWarnings("unused")
     @PostMapping("/{gameId}/take/{numberOfMatches}")
     @ResponseStatus(HttpStatus.OK)
     public Game takeMatches(@PathVariable("playerName") final String playerName,
