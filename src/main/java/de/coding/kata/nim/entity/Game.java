@@ -1,5 +1,6 @@
 package de.coding.kata.nim.entity;
 
+import de.coding.kata.nim.exception.InvalidMatchCountException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class Game {
 
     public Game(final Player player1, final Player player2, final int initialMatchCount) {
-        this.gameId = UUID.randomUUID();
+        this.gameId = UUID.randomUUID().toString();
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = player1;
@@ -27,7 +28,7 @@ public class Game {
     }
 
     @Id
-    private UUID gameId;
+    private String gameId;
 
     @ManyToOne
     private Player player1;
@@ -62,7 +63,7 @@ public class Game {
 
     public void takeMatches(final int numberOfMatches) {
         if(!canSubtract(remainingMatches, numberOfMatches)) {
-            throw new IllegalArgumentException(
+            throw new InvalidMatchCountException(
                     String.format("Cannot take %d of %d matches!", numberOfMatches, remainingMatches));
         }
         log.debug("{} took {} matches in game {}. {} remaining",

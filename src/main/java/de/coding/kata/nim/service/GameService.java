@@ -6,7 +6,6 @@ import de.coding.kata.nim.exception.GameNotFoundException;
 import de.coding.kata.nim.exception.NotYourTurnException;
 import de.coding.kata.nim.repository.GameRepository;
 import de.coding.kata.nim.service.strategy.GameStrategy;
-import de.coding.kata.nim.service.strategy.RandomStrategy;
 import de.coding.kata.nim.service.strategy.StableGeniusStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class GameService {
     }
 
     public Game getGameById(final String gameId) {
-        return gameRepository.findById(UUID.fromString(gameId)).orElseThrow(GameNotFoundException::new);
+        return gameRepository.findById(gameId).orElseThrow(GameNotFoundException::new);
     }
 
     public Game startGame(final Player player) {
