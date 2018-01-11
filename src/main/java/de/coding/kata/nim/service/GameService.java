@@ -15,6 +15,10 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Service for managing a game between two nim players.
+ * Currently it is assumed to play against a computer
+ */
 @Slf4j
 @Service
 public class GameService {
@@ -49,11 +53,22 @@ public class GameService {
         computerPlayer = playerService.getOrCreatePlayerForName(COMPUTER_PLAYER_NAME);
     }
 
+    /**
+     * Retrieve a game by it's unique identifier
+     * @param gameId The stringified UUID of a game
+     * @return A game found by the provided id
+     * @exception GameNotFoundException Exception thrown, when no game was found by the provided id
+     */
     public Game getGameById(final String gameId) {
         if(StringUtils.isEmpty(gameId)) throw new GameNotFoundException();
         return gameRepository.findById(gameId).orElseThrow(GameNotFoundException::new);
     }
 
+    /**
+     * Starts a new game with the provided player
+     * @param player The player for which to start a game
+     * @return The game instance created
+     */
     public Game startGame(final Player player) {
         if(player == null || !player.isValid()) throw new IllegalArgumentException("Player must be valid");
 
@@ -63,6 +78,13 @@ public class GameService {
         return game;
     }
 
+    /**
+     * Play a single round by providing game, player and number of matches to take.
+     * @param game Game for which to play
+     * @param player Player who takes matches
+     * @param numberOfMatches Matches count for the player
+     * @return The updated game status (after player and computer took matches)
+     */
     public Game playRound(final Game game, final Player player, final int numberOfMatches) {
         if(!game.isMyTurn(player)) throw new NotYourTurnException();
 

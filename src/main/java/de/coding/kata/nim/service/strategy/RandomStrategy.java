@@ -2,6 +2,9 @@ package de.coding.kata.nim.service.strategy;
 
 import java.util.Random;
 
+/**
+ * Computer game strategy for randomly taking matches
+ */
 public class RandomStrategy implements GameStrategy {
 
     private static final Random rand = new Random();

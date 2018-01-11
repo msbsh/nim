@@ -1,5 +1,8 @@
 package de.coding.kata.nim.service.strategy;
 
+/**
+ * Computer game strategy for winning the game
+ */
 public class StableGeniusStrategy implements GameStrategy {
 
     @Override
