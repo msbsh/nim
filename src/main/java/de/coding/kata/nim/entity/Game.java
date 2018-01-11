@@ -19,15 +19,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Game {
 
-    public Game(final Player player1, final Player player2, final int initialMatchCount) {
-        this.gameId = UUID.randomUUID().toString();
-        this.player1 = player1;
-        this.player2 = player2;
-        this.currentPlayer = player1;
-        this.remainingMatches = initialMatchCount;
-        this.winner = null;
-    }
-
     @Id
     private String gameId;
 
@@ -40,13 +31,27 @@ public class Game {
     @ManyToOne(cascade = CascadeType.ALL)
     private Player currentPlayer;
 
+    private int minMatches, maxMatches;
     private int remainingMatches;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Player winner;
 
+    public Game(final Player player1, final Player player2, final int minMatches, final int maxMatches, final int initialMatchCount) {
+        this.gameId = UUID.randomUUID().toString();
+        this.player1 = player1;
+        this.player2 = player2;
+        this.currentPlayer = player1;
+        this.minMatches = minMatches;
+        this.maxMatches = maxMatches;
+        this.remainingMatches = initialMatchCount;
+        this.winner = null;
+    }
+
     private boolean canSubtract(final int remainingMatches, final int matchesToTake) {
-        return (remainingMatches - matchesToTake) >= 0;
+        return (remainingMatches - matchesToTake) >= 0
+                && matchesToTake >= minMatches
+                && matchesToTake <= maxMatches;
     }
 
     private Player getOpponent(final Player player) {
@@ -65,7 +70,8 @@ public class Game {
     public void takeMatches(final int numberOfMatches) {
         if(!canSubtract(remainingMatches, numberOfMatches)) {
             throw new InvalidMatchCountException(
-                    String.format("Cannot take %d of %d matches!", numberOfMatches, remainingMatches));
+                    String.format("Cannot take %d of %d matches! Minimum %d, Maximum %d allowed!",
+                            numberOfMatches, remainingMatches, minMatches, maxMatches));
         }
         log.debug("{} took {} matches in game {}. {} remaining",
                 currentPlayer, numberOfMatches, gameId, (remainingMatches - numberOfMatches));

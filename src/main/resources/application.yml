@@ -17,5 +17,7 @@ logging:
 
 # Game specific settings
 game:
+  minMatches: 1
+  maxMatches: 3
   initialMatchCount: 13
   computer.name: Computer

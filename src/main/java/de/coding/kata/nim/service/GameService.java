@@ -19,6 +19,12 @@ import javax.annotation.PostConstruct;
 @Service
 public class GameService {
 
+    @Value("${game.minMatches:1}")
+    private int MIN_MATCHES;
+
+    @Value("${game.maxMatches:3}")
+    private int MAX_MATCHES;
+
     @Value("${game.initialMatchCount:13}")
     private int INITIAL_MATCH_COUNT;
 
@@ -51,7 +57,7 @@ public class GameService {
     public Game startGame(final Player player) {
         if(player == null || !player.isValid()) throw new IllegalArgumentException("Player must be valid");
 
-        final Game game = gameRepository.save(new Game(player, computerPlayer, INITIAL_MATCH_COUNT));
+        final Game game = gameRepository.save(new Game(player, computerPlayer, MIN_MATCHES, MAX_MATCHES, INITIAL_MATCH_COUNT));
 
         log.debug("Started game {}", game);
         return game;
