@@ -3,9 +3,12 @@ package de.coding.kata.nim.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import static org.springframework.util.StringUtils.*;
 
 @Data
 @Entity
@@ -15,6 +18,10 @@ public class Player {
 
     @Id
     private String name;
+
+    public boolean isValid() {
+        return !isEmpty(name);
+    }
 
     @Override
     public boolean equals(Object o) {

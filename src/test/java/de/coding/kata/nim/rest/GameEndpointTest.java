@@ -4,7 +4,6 @@ import de.coding.kata.nim.Application;
 import de.coding.kata.nim.entity.Game;
 import de.coding.kata.nim.entity.Player;
 import de.coding.kata.nim.repository.GameRepository;
-import de.coding.kata.nim.repository.PlayerRepository;
 import de.coding.kata.nim.service.GameService;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,26 +11,17 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @WebAppConfiguration
 @RunWith(SpringRunner.class)
@@ -53,9 +43,6 @@ public class GameEndpointTest {
     @Autowired
     private GameService gameService;
 
-    @Autowired
-    private PlayerRepository playerRepository;
-
     private MockMvc mockMvc;
 
     private Game game;
@@ -65,8 +52,8 @@ public class GameEndpointTest {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         gameRepository.deleteAllInBatch();
 
-        final Player player = playerRepository.save(new Player(PLAYER_NAME));
-        this.game = gameRepository.save(gameService.startGame(player));
+        final Player player = new Player(PLAYER_NAME);
+        this.game = gameService.startGame(player);
     }
 
     @Test

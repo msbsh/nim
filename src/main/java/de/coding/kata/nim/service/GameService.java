@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -44,10 +44,13 @@ public class GameService {
     }
 
     public Game getGameById(final String gameId) {
+        if(StringUtils.isEmpty(gameId)) throw new GameNotFoundException();
         return gameRepository.findById(gameId).orElseThrow(GameNotFoundException::new);
     }
 
     public Game startGame(final Player player) {
+        if(player == null || !player.isValid()) throw new IllegalArgumentException("Player must be valid");
+
         final Game game = gameRepository.save(new Game(player, computerPlayer, INITIAL_MATCH_COUNT));
 
         log.debug("Started game {}", game);

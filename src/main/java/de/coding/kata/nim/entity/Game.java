@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -30,18 +31,18 @@ public class Game {
     @Id
     private String gameId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player player1;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player player2;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player currentPlayer;
 
     private int remainingMatches;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player winner;
 
     private boolean canSubtract(final int remainingMatches, final int matchesToTake) {
